@@ -1,0 +1,6 @@
+ragas
+datasets
+openai
+python-dotenv
+pandas
+langchain-openai

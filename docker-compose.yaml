@@ -1,0 +1,44 @@
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./data/sqlite:/app/data/sqlite
+    networks:
+      - outfit_assistant_network
+    depends_on:
+      - weaviate
+    environment:
+      - WEAVIATE_HOST=weaviate
+      - WEAVIATE_PORT=8080
+      - WEAVIATE_GRPC_PORT=50051
+  weaviate:
+    image: cr.weaviate.io/semitechnologies/weaviate:1.33.1
+    ports:
+      - 8080:8080
+      - 50051:50051
+    volumes:
+      - ./data/weaviate_index:/var/lib/weaviate
+    networks:
+      - outfit_assistant_network
+    restart: on-failure:0
+    environment:
+      LOG_LEVEL: debug
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: "true"
+      PERSISTENCE_DATA_PATH: "/var/lib/weaviate"
+      CLUSTER_HOSTNAME: "node1"
+
+      ENABLE_MODULES: text2vec-openai
+      OPENAI_APIKEY_TYPE: azure
+      AZURE_APIKEY: ${AZURE_API_KEY_EMB}
+      AZURE_API_BASE: ${AZURE_API_BASE_EMB}
+      AZURE_API_VERSION: ${AZURE_API_VERSION_EMB}
+
+networks:
+  outfit_assistant_network:
+    driver: bridge

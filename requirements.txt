@@ -1,0 +1,13 @@
+python-dotenv
+pydantic
+requests
+pandas
+
+fastapi
+fastapi-controllers
+streamlit
+
+weaviate-client
+litellm
+
+google-adk
